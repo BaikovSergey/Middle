@@ -2,7 +2,7 @@ package jmm;
 
 public class Storage {
 
-    private  Integer counter = 0;
+    private  Integer counter = 2;
 
     public static final Storage INSTANCE = new Storage();
 

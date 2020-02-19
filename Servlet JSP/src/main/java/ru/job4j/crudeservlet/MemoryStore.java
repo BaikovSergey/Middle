@@ -32,7 +32,7 @@ public class MemoryStore implements Store {
     public boolean update(User user) {
         boolean result = false;
         Integer userId = user.getId();
-            if (!userExist(user)) {
+            if (userExist(user)) {
                 this.users.put(userId, user);
                 result = true;
             }

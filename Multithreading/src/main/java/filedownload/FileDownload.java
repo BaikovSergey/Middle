@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 //String file = "https://raw.githubusercontent.com/peterarsentev/course_test/master/pom.xml";
 
@@ -30,6 +31,18 @@ public class FileDownload {
             long methodTimeEnd = System.nanoTime();
             System.out.println((methodTimeEnd - methodTimeStart) / 1000000);
         } catch (InterruptedException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void downLoadListWithLimit(List<String> urlList, int speedLimit) {
+        try {
+            for (String url: urlList) {
+                Thread thread = new Thread(() -> downLoadWithLimit(url, speedLimit));
+                thread.join();
+                thread.start();
+            }
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }

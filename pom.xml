@@ -150,8 +150,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.jcip</groupId>
-            <artifactId>jcip-annotations</artifactId>
+            <groupId>ru.job4j</groupId>
+            <artifactId>collections_pro</artifactId>
             <version>1.0</version>
         </dependency>
     </dependencies>

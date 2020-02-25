@@ -1,16 +1,14 @@
 package nonblockingcache;
 
-import javax.annotation.concurrent.GuardedBy;
-import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.ConcurrentHashMap;
 
-@ThreadSafe
+
 public class NonBlockingCache {
 
-    @GuardedBy("this")
+
     private final ConcurrentHashMap<Integer, Base> cache = new ConcurrentHashMap<>();
 
-    public synchronized boolean add(Base model) {
+    public boolean add(Base model) {
         boolean result = false;
         int id = model.getId();
             if (!modelExist(model)) {
@@ -20,7 +18,7 @@ public class NonBlockingCache {
         return result;
     }
 
-    public synchronized boolean update(Base model) {
+    public boolean update(Base model) {
         boolean result = false;
         int id = model.getId();
         int version = model.getVersion();
@@ -28,17 +26,15 @@ public class NonBlockingCache {
             if (this.cache.get(id).getVersion() == version) {
                 model.setVersion(version + 1);
                 this.cache.put(id, model);
-                //this.cache.computeIfPresent();
                 result = true;
             } else {
                 throw new OptimisticException("Model was modified");
             }
-
         }
         return result;
     }
 
-    public synchronized boolean delete(Base model) {
+    public boolean delete(Base model) {
         boolean result = false;
         int id = model.getId();
         if (modelExist(model)) {
@@ -48,7 +44,7 @@ public class NonBlockingCache {
         return result;
     }
 
-    public synchronized boolean modelExist(Base model) {
+    public boolean modelExist(Base model) {
         boolean result = false;
         int id = model.getId();
             if (this.cache.containsKey(id)) {

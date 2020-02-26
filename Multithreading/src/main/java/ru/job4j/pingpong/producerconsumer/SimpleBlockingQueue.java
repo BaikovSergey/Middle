@@ -8,6 +8,12 @@ import java.util.Queue;
 @ThreadSafe
 public class SimpleBlockingQueue<T> {
 
+    private int maxSize;
+
+    public SimpleBlockingQueue(int maxLimit) {
+        this.maxSize = maxLimit;
+    }
+
     @GuardedBy("this")
     private Queue<T> queue = new LinkedList<>();
 

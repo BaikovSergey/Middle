@@ -8,7 +8,7 @@ public class SimpleBlockingQueueTest {
 
     @Test
     public void test() {
-        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
+        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(3);
 
     }
 

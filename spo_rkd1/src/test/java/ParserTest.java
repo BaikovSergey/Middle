@@ -14,7 +14,7 @@ public class ParserTest {
     public void whenGetAbbreviationsThenTheyAreInSet() {
         Parser parser = new Parser();
         String string = "ПЗССС-МБ НП должна обеспечивать связь С существующей ЦЗССС ВКИП,"
-        + "TDM/TDMA для дуплексного обмена; SCPC (DAMA) для передачи информации в по ГОСТ 1 и ГОСТ РВ 1488.";
+        + " TDM/TDMA для дуплексного обмена; SCPC (DAMA) для передачи информации в по ГОСТ 1 и ГОСТ РВ 1488 МИП.";
         HashSet<String> expect = new HashSet<>();
         expect.add("ПЗССС-МБ");
         expect.add("НП");
@@ -22,8 +22,8 @@ public class ParserTest {
         expect.add("ВКИП");
         expect.add("TDM/TDMA");
         expect.add("ГОСТ РВ");
-        expect.add("ГОСТ");
         expect.add("SCPC (DAMA)");
+        expect.add("МИП");
         Set<String> result = parser.getAbbreviations(string);
         Assert.assertThat(result, is(expect));
     }

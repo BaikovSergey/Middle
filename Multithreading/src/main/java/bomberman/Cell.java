@@ -19,4 +19,5 @@ public class Cell {
     public int getY() {
         return y;
     }
+
 }

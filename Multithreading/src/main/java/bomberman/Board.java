@@ -1,49 +1,49 @@
 package bomberman;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Board {
 
-    private final ReentrantLock[][] board = new ReentrantLock[3][3];
+    private final ReentrantLock[][] board;
 
-    private final Cell currentPlayerPos = new Cell(0, 0);
+    public Board(int boardSize) {
+        this.board = new ReentrantLock[boardSize][boardSize];
+    }
 
-    public void move(Cell source) {
-        boolean movedSuccess = false;
-        ReentrantLock currentPos = this.board[source.getY()][source.getY()];
-        Cell dist = getNextCell(this.board, this.currentPlayerPos);
-        ReentrantLock distPos = this.board[dist.getY()][dist.getY()];
+    public boolean move(Cell source, Cell dist) {
+        boolean result = false;
+        initBoard();
         synchronized (this.board[source.getX()][source.getY()]) {
-            currentPos.lock();
-            while (!movedSuccess) {
-                if(!distPos.isLocked()) {
-                    this.currentPlayerPos = dist;
-                    currentPos.unlock();
-                    movedSuccess = true;
-                } else {
-                    dist = getNextCell(this.board, this.currentPlayerPos);
+            try {
+                this.board[source.getX()][source.getY()].lock();
+                if (this.board[dist.getX()][dist.getY()].tryLock(500, TimeUnit.MILLISECONDS)) {
+                    this.board[dist.getX()][dist.getY()].lock();
+                    this.board[source.getX()][source.getY()].unlock();
+                    result = true;
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
+        return result;
     }
 
     public Cell getNextCell(ReentrantLock[][] board, Cell source) {
         Cell result = null;
-        List<Cell> moves = possibleMoves(source);
+        List<Cell> moves = possibleMoves(board, source);
         result = moves.get(ThreadLocalRandom.current().nextInt(moves.size() - 1));
         return result;
     }
 
-    private List<Cell> possibleMoves(Cell source) {
+    private List<Cell> possibleMoves(ReentrantLock[][] board, Cell source) {
         List<Cell> result = allMoves(source);
-        for (Cell cell: result) {
-            if (cell.getX() < 0 || cell.getY() < 0) {
-                result.remove(cell);
-            }
-        }
+        result.removeIf(cell -> cell.getX() < 0 || cell.getX() > board.length - 1
+                || cell.getY() < 0 || cell.getY() > board.length - 1);
         return result;
     }
 
@@ -62,4 +62,15 @@ public class Board {
         return result;
     }
 
+    public ReentrantLock[][] getBoard() {
+        return board;
+    }
+
+    private void initBoard() {
+        for (int i = 0; i < this.board.length; i++) {
+            for (int j = 0; j < this.board[i].length; j++) {
+                this.board[i][j] = new ReentrantLock();
+            }
+        }
+    }
 }

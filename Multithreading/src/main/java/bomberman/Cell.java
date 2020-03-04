@@ -20,4 +20,8 @@ public class Cell {
         return y;
     }
 
+    @Override
+    public String toString() {
+        return "X = " + this.x + ", Y = " + this.y;
+    }
 }

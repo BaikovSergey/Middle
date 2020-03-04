@@ -2,22 +2,35 @@ package bomberman;
 
 public class BomberMan {
 
-    private Board board = new Board();
+    public BomberMan(Board board) {
+        this.board = board;
+    }
 
-    private Cell source = new Cell(0, 0);
+    private final Board board;
 
-    private Cell dist = new Cell(0, 1);
+    private Cell currentPlayerPos = new Cell(0, 0);
 
     public void play() {
-        while (true) {
-            Thread player = new Thread(
-                    () -> board.move(source, dist)
-            );
+        Cell dist = this.board.getNextCell(this.board.getBoard(), this.currentPlayerPos);
+        if (this.board.move(this.currentPlayerPos, dist)) {
+            this.currentPlayerPos = dist;
         }
     }
 
     public static void main(String[] args) {
-        BomberMan game = new BomberMan();
-        game.play();
+        BomberMan game = new BomberMan(new Board(3));
+        Thread player = new Thread(
+                () -> {
+                    while (true) {
+                        game.play();
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        );
+        player.start();
     }
 }

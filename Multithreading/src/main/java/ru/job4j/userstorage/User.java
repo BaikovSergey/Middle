@@ -1,4 +1,4 @@
-package userstorage;
+package ru.job4j.userstorage;
 
 public class User {
 

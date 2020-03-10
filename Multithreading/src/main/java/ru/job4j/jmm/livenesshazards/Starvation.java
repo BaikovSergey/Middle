@@ -1,4 +1,4 @@
-package jmm.livenesshazards;
+package ru.job4j.jmm.livenesshazards;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

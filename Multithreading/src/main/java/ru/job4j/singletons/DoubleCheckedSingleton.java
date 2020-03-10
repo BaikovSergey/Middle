@@ -1,4 +1,4 @@
-package singletons;
+package ru.job4j.singletons;
 
 /**
  * Поле экземпляра класса обозначено volatile. Это решенит проблему видимости, после инициализации поля.

@@ -1,4 +1,4 @@
-package ru.job4j.pingpong.simplethread;
+package ru.job4j.simplethread;
 
 public class ConcurrentOutput {
     public static void main(String[] args) {

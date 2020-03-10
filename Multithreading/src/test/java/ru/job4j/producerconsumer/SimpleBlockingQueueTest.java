@@ -1,4 +1,4 @@
-package ru.job4j.pingpong.producerconsumer;
+package ru.job4j.producerconsumer;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package filedownload;
+package ru.job4j.filedownload;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -6,8 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-
-//String file = "https://raw.githubusercontent.com/peterarsentev/course_test/master/pom.xml";
 
 public class FileDownload {
 

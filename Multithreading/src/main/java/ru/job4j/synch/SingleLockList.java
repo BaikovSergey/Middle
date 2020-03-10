@@ -1,4 +1,4 @@
-package synch;
+package ru.job4j.synch;
 
 import ru.job4j.list.DinamicArray;
 

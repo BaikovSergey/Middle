@@ -1,4 +1,4 @@
-package jmm.perfomancehazards;
+package ru.job4j.jmm.perfomancehazards;
 
 /**
  * Пример кода с проблемой видимости. В данном случае есить две нити - reader и writer. Reader пытается считать

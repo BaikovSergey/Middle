@@ -1,4 +1,4 @@
-package jmm.safetyhazards;
+package ru.job4j.jmm.safetyhazards;
 
 /**
  * Прирмер угрозы безопасности. Такой код позволяет двум и более нитям получить несинхронизированный

@@ -1,4 +1,4 @@
-package nonblockingcache;
+package ru.job4j.nonblockingcache;
 
 import org.junit.Assert;
 import org.junit.Test;

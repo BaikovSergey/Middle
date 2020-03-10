@@ -1,4 +1,4 @@
-package counter;
+package ru.job4j.counter;
 
 import static org.junit.Assert.*;
 import org.junit.Test;

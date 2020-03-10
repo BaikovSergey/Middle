@@ -1,4 +1,4 @@
-package singletons;
+package ru.job4j.singletons;
 
 /**
  * Объект enum создается при загрузке класса и безопасно публикутся всем клиентам.

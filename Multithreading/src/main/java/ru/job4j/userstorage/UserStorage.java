@@ -1,4 +1,4 @@
-package userstorage;
+package ru.job4j.userstorage;
 
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;

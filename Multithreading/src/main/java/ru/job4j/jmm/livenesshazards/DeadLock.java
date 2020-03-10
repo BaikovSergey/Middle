@@ -1,4 +1,4 @@
-package jmm.livenesshazards;
+package ru.job4j.jmm.livenesshazards;
 
 /**
  * Пример угрозы живучести. Исполнение такого кода ведет к взаимной блокировке (deadlock).

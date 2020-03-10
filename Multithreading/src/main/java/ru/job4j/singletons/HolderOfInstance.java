@@ -1,4 +1,4 @@
-package singletons;
+package ru.job4j.singletons;
 
 /**
  * Такая реализация стабильна и не влияет на производительность системы.

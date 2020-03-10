@@ -2,44 +2,46 @@ package ru.job4j.producerconsumer;
 
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.concurrent.CopyOnWriteArrayList;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 public class SimpleBlockingQueueTest {
 
-    SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(3);
+    private final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(3);
 
     @Test
-    public void test() throws InterruptedException {
-
-
-        Thread producer = new Thread(
-                () -> {
-                    while (true) {
-                        try {
-                            this.queue.offer(1);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+    public void whenFetchAllThenGetIt() throws InterruptedException {
+        final CopyOnWriteArrayList<Integer> buffer = new CopyOnWriteArrayList<>();
+            Thread producer = new Thread(
+                    () -> {
+                        for (int i = 0; i < 5; i++) {
+                            try {
+                                queue.offer(i);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
-                }
-
-        );
-
-        Thread consumer = new Thread(
-                () -> {
-                    while (true) {
-                        try {
-                            this.queue.poll();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+            );
+            producer.start();
+            Thread consumer = new Thread(
+                    () -> {
+                        while (!queue.isEmpty() || !Thread.currentThread().isInterrupted()) {
+                            try {
+                                buffer.add(queue.poll());
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                                Thread.currentThread().interrupt();
+                            }
                         }
                     }
-                }
-        );
-
-        producer.start();
-        consumer.start();
-        producer.join();
-        consumer.join();
-    }
+            );
+            consumer.start();
+            producer.join();
+            consumer.interrupt();
+            consumer.join();
+            assertThat(buffer, is(Arrays.asList(0, 1, 2, 3, 4)));
+        }
 }

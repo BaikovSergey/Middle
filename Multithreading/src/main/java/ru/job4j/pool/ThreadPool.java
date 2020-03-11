@@ -7,6 +7,8 @@ import java.util.List;
 
 public class ThreadPool {
 
+    private boolean interrupt = false;
+
     private int size = Runtime.getRuntime().availableProcessors();
 
     private final List<Thread> threads = new LinkedList<>();
@@ -14,15 +16,29 @@ public class ThreadPool {
     private final SimpleBlockingQueue<Runnable> tasks = new SimpleBlockingQueue<>(5);
 
     public void work(Runnable job) {
-        try {
-            this.tasks.offer(job);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            Thread.currentThread().interrupt();
+        if (!this.interrupt) {
+            try {
+                this.tasks.offer(job);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
-    public void shutdown() {
+    public Runnable run() {
+        Runnable result = null;
+        if (!this.tasks.isEmpty()) {
+            try {
+                result = this.tasks.poll();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
 
+    public void shutdown() {
+        this.interrupt = true;
     }
 }

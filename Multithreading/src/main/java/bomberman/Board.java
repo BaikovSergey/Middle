@@ -15,6 +15,14 @@ public class Board {
         this.board = new ReentrantLock[boardSize][boardSize];
     }
 
+    public ReentrantLock[][] getBoard() {
+        return board;
+    }
+
+    public void blockCell(int x, int y) {
+        this.board[x][y].lock();
+    }
+
     public boolean move(Cell source, Cell dist) {
         boolean result = false;
         initBoard();
@@ -62,9 +70,6 @@ public class Board {
         return result;
     }
 
-    public ReentrantLock[][] getBoard() {
-        return board;
-    }
 
     private void initBoard() {
         for (int i = 0; i < this.board.length; i++) {

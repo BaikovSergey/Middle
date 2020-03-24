@@ -1,7 +1,9 @@
 package ru.job4j.pool;
 
+import net.jcip.annotations.ThreadSafe;
 import ru.job4j.producerconsumer.SimpleBlockingQueue;
 
+import javax.annotation.concurrent.GuardedBy;
 import java.util.*;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadLocalRandom;
@@ -10,23 +12,26 @@ public class ThreadPool {
 
     private volatile boolean interrupt = false;
 
-    private final int maxthreads;
+    private boolean firstRun = true;
+
+    private final int maxThreads;
 
     private final List<Thread> threads = new LinkedList<>();
 
-    private final Queue<Thread> threadsQueue = new SynchronousQueue<>();
+    private final SimpleBlockingQueue<Runnable> tasks = new SimpleBlockingQueue<>(10);
 
-    private final SimpleBlockingQueue<Runnable> tasks = new SimpleBlockingQueue<>(2);
-
-    public ThreadPool(int size) {
-        this.maxthreads = size;
+    public ThreadPool(int threadLimit) {
+        this.maxThreads = threadLimit;
     }
 
     public void work(Runnable job) {
         if (!this.interrupt) {
             try {
                 this.tasks.offer(job);
-                run();
+                if (firstRun) {
+                   init();
+                   firstRun = false;
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 Thread.currentThread().interrupt();
@@ -34,17 +39,23 @@ public class ThreadPool {
         }
     }
 
-    private void run() {
-            try {
-                Thread thread = new Thread(this.tasks.poll());
-                this.threads.add(thread);
-                thread.start();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                Thread.currentThread().interrupt();
-            }
+    private void init() {
+        for (int i = 0; i < maxThreads; i++) {
+            Runnable runnable = () -> {
+                try {
+                    while (!this.tasks.isEmpty()) {
+                        this.tasks.poll().run();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Thread.currentThread().interrupt();
+                }
+            };
+            Thread thread = new Thread(runnable);
+            this.threads.add(thread);
+            thread.start();
+        }
     }
-
 
     public void shutdown() {
         this.interrupt = true;
@@ -66,5 +77,6 @@ public class ThreadPool {
         pool.work(r5);
 
         pool.shutdown();
+
     }
 }

@@ -1,6 +1,5 @@
 package bomberman;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BomberMan {
@@ -13,13 +12,11 @@ public class BomberMan {
 
     private int numOfMonsters;
 
-    private List<Monster> monsters = new ArrayList<>();
-
     private Cell currentPlayerPos = new Cell(0, 0);
 
     private boolean terminate = false;
 
-    public void createMonsters() {
+    public void runMonsters() {
         List<Monster> monsters = this.board.getMonsters();
         for (int i = 0; i < monsters.size(); i++) {
             int index = i;
@@ -40,21 +37,10 @@ public class BomberMan {
         }
     }
 
-    private void moveMonster(Monster monster) {
-        Cell monsterPosition = monster.getCurrentPosition();
-        Cell dist = this.board.moveMonsterToNextCell(this.board.getBoard(), this.currentPlayerPos);
-        if (this.board.move(this.currentPlayerPos, dist)) {
-            this.currentPlayerPos = dist;
-        }
-    }
 
     public void init(int boardSize, int numOfMonsters) {
-        this.board = new Board(boardSize);
-        this.board.initBoard(numOfMonsters);
-        List<Cell> monsters = this.board.getMonsters();
-        for (Cell cell: monsters) {
-            this.monsters.add(new Monster(cell));
-        }
+        this.board = new Board(boardSize, numOfMonsters);
+        this.board.initBoard();
     }
 
     public void setInitParameters(int boardSize, int numOfMonsters) {
@@ -66,7 +52,7 @@ public class BomberMan {
         this.menu.showMenu();
         setInitParameters(this.menu.getBoardSize(), this.menu.getNumOfMonsters());
         init(this.boardSize, this.numOfMonsters);
-        createMonsters(this.numOfMonsters);
+        runMonsters();
     }
 
     public void shutdown() {

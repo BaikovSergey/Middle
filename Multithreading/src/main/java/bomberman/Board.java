@@ -7,8 +7,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Board {
-//Переделать распределение ячеек: создаем список из всех ячеек - убираем 0.0 - выбираем случайные ячйки для блков и удоляем их из общего сприска
-    // - тоже для монстров
+
     private final ReentrantLock[][] board;
 
     private int numberOfBlocks;
@@ -19,9 +18,12 @@ public class Board {
 
     private List<Block> blocks = new ArrayList<>();
 
-    public Board(ReentrantLock[][] board, int numberOfBlocks, int numberOfMonsters) {
-        this.board = board;
-        this.numberOfBlocks = numberOfBlocks;
+    private List<Cell> allCells = new ArrayList<>();
+
+    public Board(int boardSize, int numberOfMonsters) {
+        this.board = new ReentrantLock[boardSize][boardSize];
+        double percentOfBlocks = 0.1;
+        this.numberOfBlocks = (int) (boardSize * boardSize * percentOfBlocks);
         this.numberOfMonsters = numberOfMonsters;
     }
 
@@ -37,8 +39,10 @@ public class Board {
         return blocks;
     }
 
+    //TODO
     public boolean moveMonsterToNextCell(Monster monster) {
-
+        Cell source = monster.getCurrentPosition();
+        Cell dist =
     }
 
     public boolean movePlayerToNextCell(Cell source, Cell dist) {
@@ -98,44 +102,27 @@ public class Board {
     }
 
 
-    public void initBoard(int numberOfMonsters) {
+    public void initBoard() {
         for (int i = 0; i < this.board.length; i++) {
             for (int j = 0; j < this.board[i].length; j++) {
                 this.board[i][j] = new ReentrantLock();
             }
         }
+        setAllCells();
         generateBlocks(this.numberOfBlocks);
         placeBlocks();
         generateMonsters(this.numberOfMonsters);
         placeMonsters();
     }
 
-    private void generateMonsters(int numberOfMonsters) {
-        for (int i = 0; i < numberOfMonsters; i++) {
-            Monster monster = new Monster(generateCell());
-            while (!listContainsMonster(monster, this.monsters)) {
-                monster = new Monster(generateCell());
-            }
-            this.monsters.add(monster);
 
-        }
-    }
 
     private void generateBlocks(int numberOfBlocks) {
+        this.allCells.remove(0);
         for (int i = 0; i < numberOfBlocks; i++) {
-            Block block = new Block(generateCell());
-            while (!listContainsBlock(block, this.blocks)) {
-                block = new Block(generateCell());
-            }
+            int index = ThreadLocalRandom.current().nextInt(this.board.length);
+            Block block = new Block(this.allCells.remove(index));
             this.blocks.add(block);
-            this.blocks.remove()
-        }
-    }
-
-    private void placeMonsters() {
-        for (Monster monster: this.monsters) {
-            Cell cell = monster.getCurrentPosition();
-            this.board[cell.getX()][cell.getY()].lock();
         }
     }
 
@@ -146,44 +133,26 @@ public class Board {
         }
     }
 
-    /**
-     * Generates random Cell in this.bord dimension. If generated Cell has coordinates 0:0
-     * (initial player position) then generates Cell again.
-     * @return Random Cell
-     */
-    private Cell generateCell() {
-        Cell result = null;
-        boolean generate = false;
-        while (!generate) {
-            int x = ThreadLocalRandom.current().nextInt(this.board.length - 1);
-            int y = ThreadLocalRandom.current().nextInt(this.board.length - 1);
-            if (x != 0 && y != 0) {
-                result = new Cell(x, y);
-                generate = true;
-            }
+    private void generateMonsters(int numberOfMonsters) {
+        for (int i = 0; i < numberOfMonsters; i++) {
+            int index = ThreadLocalRandom.current().nextInt(this.board.length);
+            Monster monster = new Monster(this.allCells.remove(index));
+            this.monsters.add(monster);
         }
-        return result;
     }
 
-    private boolean listContainsMonster(Monster monster, List<Monster> list) {
-        boolean result = false;
-        for (Monster listMonster: list) {
-            if (monster.equals(listMonster)) {
-                result = true;
-                break;
-            }
+    private void placeMonsters() {
+        for (Monster monster: this.monsters) {
+            Cell cell = monster.getCurrentPosition();
+            this.board[cell.getX()][cell.getY()].lock();
         }
-        return result;
     }
 
-    private boolean listContainsBlock(Block block, List<Block> list) {
-        boolean result = false;
-        for (Block listBlock: list) {
-            if (block.equals(listBlock)) {
-                result = true;
-                break;
+    private void setAllCells() {
+        for (int i = 0; i < this.board.length; i++) {
+            for (int j = 0; j < this.board[i].length; j++) {
+                this.allCells.add(new Cell(i, j));
             }
         }
-        return result;
     }
 }

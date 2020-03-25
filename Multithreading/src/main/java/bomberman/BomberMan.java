@@ -8,6 +8,8 @@ public class BomberMan {
 
     private GameMenu menu = new GameMenu();
 
+    private PlayerMoves playerMoves = new PlayerMoves();
+
     private int boardSize;
 
     private int numOfMonsters;
@@ -16,14 +18,47 @@ public class BomberMan {
 
     private boolean terminate = false;
 
-    public void runMonsters() {
+    private BomberMan() {
+    }
+
+    public static BomberMan getInstance() {
+        return Holder.INSTANCE;
+    }
+
+    private static final class Holder {
+        private static final BomberMan INSTANCE = new BomberMan();
+    }
+
+    public void play() {
+        this.menu.showMenu();
+        setInitParameters(this.menu.getBoardSize(), this.menu.getNumOfMonsters());
+        init(this.boardSize, this.numOfMonsters);
+        runMonsters();
+        giveControlToPlayer();
+    }
+
+    public void shutdown() {
+        this.terminate = true;
+    }
+
+    private void init(int boardSize, int numOfMonsters) {
+        this.board = new Board(boardSize, numOfMonsters);
+        this.board.initBoard();
+    }
+
+    private void setInitParameters(int boardSize, int numOfMonsters) {
+        this.boardSize = boardSize;
+        this.numOfMonsters = numOfMonsters;
+    }
+
+    private void runMonsters() {
         List<Monster> monsters = this.board.getMonsters();
         for (int i = 0; i < monsters.size(); i++) {
             int index = i;
             Thread monster = new Thread(
                     () -> {
                         while (!this.terminate) {
-                            this.board.moveMonsterToNextCell(monsters.get(index));
+                            this.board.moveMonster(monsters.get(index));
                             try {
                                 Thread.sleep(1000);
                             } catch (InterruptedException e) {
@@ -37,27 +72,12 @@ public class BomberMan {
         }
     }
 
-
-    public void init(int boardSize, int numOfMonsters) {
-        this.board = new Board(boardSize, numOfMonsters);
-        this.board.initBoard();
+    private void giveControlToPlayer() {
+        while (!this.terminate) {
+            menu.showPosibleMoves();
+        }
     }
 
-    public void setInitParameters(int boardSize, int numOfMonsters) {
-        this.boardSize = boardSize;
-        this.numOfMonsters = numOfMonsters;
-    }
-
-    public void play() {
-        this.menu.showMenu();
-        setInitParameters(this.menu.getBoardSize(), this.menu.getNumOfMonsters());
-        init(this.boardSize, this.numOfMonsters);
-        runMonsters();
-    }
-
-    public void shutdown() {
-        this.terminate = true;
-    }
 
     public static void main(String[] args) {
         BomberMan game = new BomberMan();

@@ -39,16 +39,19 @@ public class Board {
         return blocks;
     }
 
-    //TODO
-    public boolean moveMonsterToNextCell(Monster monster) {
+    public boolean moveMonster(Monster monster) {
+        boolean result = false;
         Cell source = monster.getCurrentPosition();
-        Cell dist =
+        Cell dist = getRandomCell(source);
+        if (move(source, dist)) {
+            result = true;
+        }
+        return result;
     }
 
-    public boolean movePlayerToNextCell(Cell source, Cell dist) {
+    public boolean movePlayer(Cell source, Cell dist) {
         boolean result = false;
-        List<Cell> moves = possibleMoves(this.board, source);
-        if (canMove(moves, dist)) {
+        if (move(source, dist)) {
             result = true;
         }
         return result;
@@ -71,18 +74,16 @@ public class Board {
         return result;
     }
 
-    private boolean canMove(List<Cell> listOfPossibleMoves, Cell dist) {
-        boolean result = false;
-        if (listOfPossibleMoves.contains(dist)) {
-            result = true;
-        }
-        return result;
+    private Cell getRandomCell(Cell source) {
+        List<Cell> list = possibleMoves(source);
+        int index = ThreadLocalRandom.current().nextInt(this.board.length);
+        return list.get(index);
     }
 
-    private List<Cell> possibleMoves(ReentrantLock[][] board, Cell source) {
+    private List<Cell> possibleMoves(Cell source) {
         List<Cell> result = allMoves(source);
-        result.removeIf(cell -> cell.getX() < 0 || cell.getX() > board.length - 1
-                || cell.getY() < 0 || cell.getY() > board.length - 1);
+        result.removeIf(cell -> cell.getX() < 0 || cell.getX() > this.board.length - 1
+                || cell.getY() < 0 || cell.getY() > this.board.length - 1);
         return result;
     }
 
@@ -115,7 +116,13 @@ public class Board {
         placeMonsters();
     }
 
-
+    private void setAllCells() {
+        for (int i = 0; i < this.board.length; i++) {
+            for (int j = 0; j < this.board[i].length; j++) {
+                this.allCells.add(new Cell(i, j));
+            }
+        }
+    }
 
     private void generateBlocks(int numberOfBlocks) {
         this.allCells.remove(0);
@@ -145,14 +152,6 @@ public class Board {
         for (Monster monster: this.monsters) {
             Cell cell = monster.getCurrentPosition();
             this.board[cell.getX()][cell.getY()].lock();
-        }
-    }
-
-    private void setAllCells() {
-        for (int i = 0; i < this.board.length; i++) {
-            for (int j = 0; j < this.board[i].length; j++) {
-                this.allCells.add(new Cell(i, j));
-            }
         }
     }
 }

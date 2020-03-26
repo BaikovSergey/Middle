@@ -8,16 +8,34 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Board {
 
+    /**
+     * Game board.
+     */
     private final ReentrantLock[][] board;
 
+    /**
+     * Number of blocks on game board.
+     */
     private int numberOfBlocks;
 
+    /**
+     * Number of monsters on game board.
+     */
     private int numberOfMonsters;
 
+    /**
+     * List of all monsters on game board.
+     */
     private List<Monster> monsters = new ArrayList<>();
 
+    /**
+     * List of all blocks on game board.
+     */
     private List<Block> blocks = new ArrayList<>();
 
+    /**
+     * List of all cells of board.
+     */
     private List<Cell> allCells = new ArrayList<>();
 
     public Board(int boardSize, int numberOfMonsters) {
@@ -39,6 +57,11 @@ public class Board {
         return blocks;
     }
 
+    /**
+     * Method moves monster to one random Cell from current position.
+     * @param monster Monster to move.
+     * @return true if monster was successfully moved, false otherwise.
+     */
     public boolean moveMonster(Monster monster) {
         boolean result = false;
         Cell source = monster.getCurrentPosition();
@@ -49,6 +72,12 @@ public class Board {
         return result;
     }
 
+    /**
+     * Method moves player to one Cell from current position.
+     * @param source current player position.
+     * @param dist destination Cell.
+     * @return true if player was successfully moved, false otherwise.
+     */
     public boolean movePlayer(Cell source, Cell dist) {
         boolean result = false;
         if (move(source, dist)) {
@@ -57,6 +86,12 @@ public class Board {
         return result;
     }
 
+    /**
+     * Method trays to lock one Cell from current position.
+     * @param source Current position.
+     * @param dist destination Cell.
+     * @return true if Cell was successfully locked.
+     */
     private boolean move(Cell source, Cell dist) {
         boolean result = false;
         synchronized (this.board[source.getX()][source.getY()]) {
@@ -74,12 +109,22 @@ public class Board {
         return result;
     }
 
+    /**
+     * Method selects one random Cell from list of Cells.
+     * @param source Current position.
+     * @return Cell.
+     */
     private Cell getRandomCell(Cell source) {
         List<Cell> list = possibleMoves(source);
         int index = ThreadLocalRandom.current().nextInt(this.board.length);
         return list.get(index);
     }
 
+    /**
+     * Method forms list of all possible moves from current position.
+     * @param source Current position.
+     * @return list of Cells.
+     */
     private List<Cell> possibleMoves(Cell source) {
         List<Cell> result = allMoves(source);
         result.removeIf(cell -> cell.getX() < 0 || cell.getX() > this.board.length - 1
@@ -87,6 +132,11 @@ public class Board {
         return result;
     }
 
+    /**
+     * Method generates list of all Cells around current position.
+     * @param source Current position.
+     * @return list of all Cell around current position.
+     */
     private List<Cell> allMoves(Cell source) {
         List<Cell> result = new ArrayList<>();
         int x = source.getX();
@@ -102,6 +152,9 @@ public class Board {
         return result;
     }
 
+    /**
+     * Initiate game board.
+     */
     public void initBoard() {
         for (int i = 0; i < this.board.length; i++) {
             for (int j = 0; j < this.board[i].length; j++) {
@@ -115,6 +168,9 @@ public class Board {
         placeMonsters();
     }
 
+    /**
+     * Method adds all possible Cells, depending on board size, to list "allCells".
+     */
     private void setAllCells() {
         for (int i = 0; i < this.board.length; i++) {
             for (int j = 0; j < this.board[i].length; j++) {
@@ -123,6 +179,10 @@ public class Board {
         }
     }
 
+    /**
+     * Remove random Cells from list "allCells" and puts it to list "blocks"
+     * @param numberOfBlocks Number of blocks.
+     */
     private void generateBlocks(int numberOfBlocks) {
         this.allCells.remove(0);
         for (int i = 0; i < numberOfBlocks; i++) {
@@ -132,6 +192,9 @@ public class Board {
         }
     }
 
+    /**
+     * Lock all ReentrantLocks objects (blocks) in board, according to there Cells position.
+     */
     private void placeBlocks() {
         for (Block block: this.blocks) {
             Cell cell = block.getCurrentPosition();
@@ -139,6 +202,10 @@ public class Board {
         }
     }
 
+    /**
+     * Remove random Cells from list "allCells" and puts it to list "monsters"
+     * @param numberOfMonsters Number of monsters.
+     */
     private void generateMonsters(int numberOfMonsters) {
         for (int i = 0; i < numberOfMonsters; i++) {
             int index = ThreadLocalRandom.current().nextInt(this.board.length);
@@ -147,6 +214,9 @@ public class Board {
         }
     }
 
+    /**
+     * Lock all ReentrantLocks objects (monsters) in board, according to there Cells position.
+     */
     private void placeMonsters() {
         for (Monster monster: this.monsters) {
             Cell cell = monster.getCurrentPosition();

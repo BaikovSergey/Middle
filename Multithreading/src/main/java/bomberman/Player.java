@@ -1,15 +1,14 @@
 package bomberman;
 
-public class Monster {
+public class Player {
 
     private Cell currentPosition;
 
-    public Monster(Cell currentPosition) {
+    public Player(Cell currentPosition) {
         this.currentPosition = currentPosition;
     }
 
     public Cell getCurrentPosition() {
         return currentPosition;
     }
-
 }

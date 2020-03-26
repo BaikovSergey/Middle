@@ -2,7 +2,7 @@ package bomberman;
 
 import java.util.List;
 
-public class BomberMan {
+public class Game {
 
     private Board board;
 
@@ -14,19 +14,19 @@ public class BomberMan {
 
     private int numOfMonsters;
 
-    private Cell currentPlayerPos = new Cell(0, 0);
+    private Player playerPossition = new Player(new Cell(0, 0));
 
     private boolean terminate = false;
 
-    private BomberMan() {
+    private Game() {
     }
 
-    public static BomberMan getInstance() {
+    public static Game getInstance() {
         return Holder.INSTANCE;
     }
 
     private static final class Holder {
-        private static final BomberMan INSTANCE = new BomberMan();
+        private static final Game INSTANCE = new Game();
     }
 
     public void play() {
@@ -74,13 +74,13 @@ public class BomberMan {
 
     private void giveControlToPlayer() {
         while (!this.terminate) {
-            menu.showPosibleMoves();
+            menu.showPossibleMoves();
         }
     }
 
 
     public static void main(String[] args) {
-        BomberMan game = new BomberMan();
+        Game game = new Game();
         game.play();
     }
 }

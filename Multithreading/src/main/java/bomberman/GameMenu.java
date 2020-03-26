@@ -18,7 +18,7 @@ public class GameMenu {
         return numOfMonsters;
     }
 
-    public void showPosibleMoves() {
+    public void showPossibleMoves() {
 
     }
 

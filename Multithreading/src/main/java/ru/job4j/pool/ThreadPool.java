@@ -1,12 +1,8 @@
 package ru.job4j.pool;
 
-import net.jcip.annotations.ThreadSafe;
 import ru.job4j.producerconsumer.SimpleBlockingQueue;
-
-import javax.annotation.concurrent.GuardedBy;
 import java.util.*;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadLocalRandom;
+
 
 public class ThreadPool {
 

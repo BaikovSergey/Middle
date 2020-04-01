@@ -8,7 +8,7 @@ import java.util.Iterator;
 
 @ThreadSafe
 public class SingleLockList<T> implements Iterable<T> {
-
+    
     @GuardedBy("this")
     private final DinamicArray<T> list = new DinamicArray<>(10);
 

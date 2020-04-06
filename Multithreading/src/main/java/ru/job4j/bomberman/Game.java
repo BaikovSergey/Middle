@@ -1,4 +1,4 @@
-package bomberman;
+package ru.job4j.bomberman;
 
 import java.util.List;
 

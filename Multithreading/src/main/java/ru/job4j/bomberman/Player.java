@@ -1,10 +1,10 @@
-package bomberman;
+package ru.job4j.bomberman;
 
-public class Block {
+public class Player {
 
     private Cell currentPosition;
 
-    public Block(Cell currentPosition) {
+    public Player(Cell currentPosition) {
         this.currentPosition = currentPosition;
     }
 

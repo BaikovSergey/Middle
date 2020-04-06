@@ -94,7 +94,6 @@ public class Board {
      */
     private boolean move(Cell source, Cell dist) {
         boolean result = false;
-        synchronized (this.board[source.getX()][source.getY()]) {
             try {
                 this.board[source.getX()][source.getY()].lock();
                 if (this.board[dist.getX()][dist.getY()].tryLock(500, TimeUnit.MILLISECONDS)) {
@@ -104,8 +103,8 @@ public class Board {
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
-        }
         return result;
     }
 

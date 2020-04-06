@@ -36,13 +36,17 @@ public class Switcher {
         Thread second = new Thread(
                 () -> {
                     try {
+                        first.join();
                         locker.lock();
                         int counter = 0;
                         while (counter < 10) {
                             switcher.addToEnd(2);
                             counter++;
                         }
-                    } finally {
+                    } catch (InterruptedException e) {
+                       e.printStackTrace();
+                       Thread.currentThread().interrupt();
+                    }finally {
                         locker.unlock();
                     }
 

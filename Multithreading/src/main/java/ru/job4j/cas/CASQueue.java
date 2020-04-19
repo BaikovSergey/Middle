@@ -13,10 +13,12 @@ public class CASQueue<T> {
 
     public void push(T value) {
         Node<T> temp = new Node<>(value);
-        Node<T> ref;
+        Node<T> refTail;
+        Node<T> refHead;
         do {
-            ref = tail.get();
-            if (ref == null) {
+            refTail = tail.get();
+            refHead = head.get();
+            if (refTail == null) {
                 head.set(temp);
                 tail.set(temp);
                 temp.next = null;
@@ -26,20 +28,22 @@ public class CASQueue<T> {
             tail.get().next = temp;
             tail.set(temp);
             temp.next = null;
-        } while (!tail.compareAndSet(ref, temp));
+        } while (!tail.compareAndSet(refTail, temp) && !head.compareAndSet(refHead, refHead));
     }
 
     public T poll() {
         Node<T> temp;
-        Node<T> ref;
+        Node<T> refHead;
+        Node<T> refTail;
         do {
-            ref = head.get();
-            if (ref == null) {
+            refHead = head.get();
+            refTail = tail.get();
+            if (refHead == null) {
                 throw new IllegalStateException("Queue is empty");
             }
-            temp = ref.next;
-        } while (!head.compareAndSet(ref, temp));
-        return ref.value;
+            temp = refHead.next;
+        } while (!head.compareAndSet(refHead, temp) && !tail.compareAndSet(refTail, refTail));
+        return refHead.value;
     }
 
     private static final class Node<T> {

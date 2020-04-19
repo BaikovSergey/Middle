@@ -21,10 +21,9 @@ public class UserServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        this.dispatch.put("add", (arg) -> add(arg));
-        this.dispatch.put("update", (arg) -> update(arg));
-        this.dispatch.put("delete", (arg) -> delete(arg));
-        System.out.println("FROM INIT!!!!!!");
+        this.dispatch.put("add", this::add);
+        this.dispatch.put("update", this::update);
+        this.dispatch.put("delete", this::delete);
     }
 
 
@@ -47,23 +46,22 @@ public class UserServlet extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
         String action = req.getParameter("action");
-        int id = Integer.parseInt(req.getParameter("id"));
         String name = req.getParameter("name");
         String login = req.getParameter("login");
         String email = req.getParameter("email");
-        User user = new User(id, name, login, email);
+        User user = new User(name, login, email);
         this.dispatch.get(action).accept(user);
     }
 
     private void add(User user) {
-        this.logic.add(user);
+        this.logic.add(user.getId(), user);
     }
 
     private void update(User user) {
-        this.logic.update(user);
+        this.logic.update(user.getId(), user);
     }
 
     private void delete(User user) {
-        this.logic.delete(user);
+        this.logic.delete(user.getId());
     }
 }

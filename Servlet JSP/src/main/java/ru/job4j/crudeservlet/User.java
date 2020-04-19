@@ -1,6 +1,7 @@
 package ru.job4j.crudeservlet;
 
 import java.util.Date;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class User {
 
@@ -10,8 +11,8 @@ public class User {
     private String email;
     private Date createDate;
 
-    public User(int id, String name, String login, String email) {
-        this.id = id;
+    public User(String name, String login, String email) {
+        this.id = ThreadLocalRandom.current().nextInt(1000);
         this.name = name;
         this.login = login;
         this.email = email;
@@ -28,6 +29,10 @@ public class User {
 
     public String getLogin() {
         return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
     }
 
     public String getEmail() {

@@ -27,6 +27,9 @@ public class UserCreateServlet extends HttpServlet {
                 "Login : <input type='text' name='login'/>" +
                 "<input type='submit' value='Add user'>" +
                 "</form>" +
+                "<form action='" + req.getContextPath() + "/list' method='get'>" +
+                "<input type='submit' value='List of users'>" +
+                "</form>" +
                 "</body>" +
                 "</html>");
         writer.flush();
@@ -36,12 +39,11 @@ public class UserCreateServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
         PrintWriter writer = new PrintWriter(resp.getOutputStream());
-        int id = ThreadLocalRandom.current().nextInt(100);
         String name = "John Doe";
         String login = req.getParameter("login");
         String email = "johndoe@gmail.com";
-        User user = new User(id, name, login, email);
-        this.logic.add(user);
+        User user = new User(name, login, email);
+        this.logic.add(user.getId(), user);
         if (!login.isEmpty()) {
             writer.append("User added!");
         }

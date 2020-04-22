@@ -1,5 +1,6 @@
 package ru.job4j.switcher;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Switcher {
@@ -15,7 +16,11 @@ public class Switcher {
     }
 
     public static void main(String[] args) throws InterruptedException {
+
+        CountDownLatch latch = new CountDownLatch(1);
+
         Switcher switcher = new Switcher();
+
         ReentrantLock locker = new ReentrantLock();
 
         Thread first = new Thread(
@@ -29,6 +34,7 @@ public class Switcher {
                         }
                     } finally {
                         locker.unlock();
+                        latch.countDown();
                     }
 
                 }
@@ -36,16 +42,16 @@ public class Switcher {
         Thread second = new Thread(
                 () -> {
                     try {
-                        first.join();
+                        latch.await();
                         locker.lock();
                         int counter = 0;
                         while (counter < 10) {
                             switcher.addToEnd(2);
                             counter++;
                         }
-                    } catch (InterruptedException e) {
-                       e.printStackTrace();
-                       Thread.currentThread().interrupt();
+                    }catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Thread.currentThread().interrupt();
                     }finally {
                         locker.unlock();
                     }

@@ -25,37 +25,58 @@ public class Switcher {
 
         Thread first = new Thread(
                 () -> {
-                    try {
-                        locker.lock();
-                        int counter = 0;
-                        while (counter < 10) {
-                            switcher.addToEnd(1);
-                            counter++;
+                    synchronized (locker) {
+                        while (!locker.isLocked()) {
+                            try {
+                                locker.lock();
+                                int counter = 0;
+                                while (counter < 10) {
+                                    switcher.addToEnd(1);
+                                    counter++;
+                                }
+                            } finally {
+                                locker.unlock();
+                                latch.countDown();
+                                locker.notifyAll();
+                                try {
+                                    locker.wait();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                    Thread.currentThread().interrupt();
+                                }
+                            }
                         }
-                    } finally {
-                        locker.unlock();
-                        latch.countDown();
                     }
 
                 }
         );
         Thread second = new Thread(
                 () -> {
-                    try {
-                        latch.await();
-                        locker.lock();
-                        int counter = 0;
-                        while (counter < 10) {
-                            switcher.addToEnd(2);
-                            counter++;
+                    synchronized (locker) {
+                        while (!locker.isLocked()) {
+                            try {
+                                latch.await();
+                                locker.lock();
+                                int counter = 0;
+                                while (counter < 10) {
+                                    switcher.addToEnd(2);
+                                    counter++;
+                                }
+                            }catch (InterruptedException e) {
+                                e.printStackTrace();
+                                Thread.currentThread().interrupt();
+                            }finally {
+                                locker.unlock();
+                                locker.notifyAll();
+                                try {
+                                    locker.wait();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                    Thread.currentThread().interrupt();
+                                }
+                            }
                         }
-                    }catch (InterruptedException e) {
-                        e.printStackTrace();
-                        Thread.currentThread().interrupt();
-                    }finally {
-                        locker.unlock();
                     }
-
                 }
         );
 
@@ -63,7 +84,5 @@ public class Switcher {
         second.start();
         first.join();
         second.join();
-
-        System.out.println(switcher.getString());
     }
 }

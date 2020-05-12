@@ -18,30 +18,30 @@ public class ValidateService implements Validate {
     }
 
     @Override
-    public boolean add(User user) {
+    public boolean add(int id, User user) {
         boolean result = false;
-            if (!userExist(user)) {
-                this.logic.add(user);
+            if (!userExist(id)) {
+                this.logic.add(id, user);
                 result = true;
             }
         return result;
     }
 
     @Override
-    public boolean update(User user) {
+    public boolean update(int id, User user) {
         boolean result = false;
-            if (userExist(user)) {
-                this.logic.update(user);
+            if (userExist(id)) {
+                this.logic.update(id, user);
                 result = true;
             }
         return result;
     }
 
     @Override
-    public boolean delete(User user) {
+    public boolean delete(int id) {
         boolean result = false;
-            if (userExist(user)) {
-                this.logic.delete(user);
+            if (userExist(id)) {
+                this.logic.delete(id);
                 result = true;
             }
         return result;
@@ -53,17 +53,18 @@ public class ValidateService implements Validate {
     }
 
     @Override
-    public User findById(User user) {
-        User result = new User(-1, "", "", "");
-            if (userExist(user)) {
-                result = this.logic.findById(user);
+    public User findById(int id) {
+        User result = new User("", "", "");
+            if (userExist(id)) {
+                result = this.logic.findById(id);
             }
         return result;
     }
 
-    private boolean userExist(User user) {
+    @Override
+    public boolean userExist(int id) {
         boolean result = false;
-            if (this.logic.userExist(user)) {
+            if (this.logic.userExist(id)) {
                 result = true;
             }
         return result;

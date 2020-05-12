@@ -3,9 +3,10 @@ package ru.job4j.crudeservlet;
 import java.util.List;
 
 public interface Validate {
-    boolean add(User user);
-    boolean update(User user);
-    boolean delete(User user);
+    boolean add(int id, User user);
+    boolean update(int id, User user);
+    boolean delete(int id);
     List<User> findAll();
-    User findById(User user);
+    User findById(int id);
+    boolean userExist(int id);
 }

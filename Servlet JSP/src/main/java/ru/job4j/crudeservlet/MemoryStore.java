@@ -18,22 +18,20 @@ public class MemoryStore implements Store {
     }
 
     @Override
-    public boolean add(User user) {
+    public boolean add(int id, User user) {
         boolean result = false;
-        Integer userId = user.getId();
-            if (!userExist(user)) {
-                this.users.put(userId, user);
+            if (!userExist(id)) {
+                this.users.put(id, user);
                 result = true;
             }
         return result;
     }
 
     @Override
-    public boolean update(User user) {
+    public boolean update(int id, User user) {
         boolean result = false;
-        Integer userId = user.getId();
-            if (userExist(user)) {
-                this.users.put(userId, user);
+            if (userExist(id)) {
+                this.users.put(id, user);
                 result = true;
             }
 
@@ -41,11 +39,10 @@ public class MemoryStore implements Store {
     }
 
     @Override
-    public boolean delete(User user) {
+    public boolean delete(int id) {
         boolean result = false;
-        Integer userId = user.getId();
-            if (userExist(user)) {
-                this.users.remove(userId);
+            if (userExist(id)) {
+                this.users.remove(id);
                 result = true;
             }
         return result;
@@ -67,20 +64,18 @@ public class MemoryStore implements Store {
     }
 
     @Override
-    public User findById(User user) {
-        User result = new User(-1, "", "", "");
-        Integer userId = user.getId();
-            if (userExist(user)) {
-                result = this.users.get(userId);
+    public User findById(int id) {
+        User result = new User("" , "", "");
+            if (userExist(id)) {
+                result = this.users.get(id);
             }
         return result;
     }
 
     @Override
-    public boolean userExist(User user) {
-        Integer userId = user.getId();
+    public boolean userExist(int id) {
         boolean result = false;
-            if (this.users.containsKey(userId)) {
+            if (this.users.containsKey(id)) {
                 result = true;
             }
         return result;

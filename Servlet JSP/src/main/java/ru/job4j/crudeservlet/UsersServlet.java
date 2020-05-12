@@ -6,26 +6,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class UsersServlet extends HttpServlet {
 
     private final ValidateService logic = ValidateService.getInstance();
 
-    private final UserUpdateServlet update = new UserUpdateServlet();
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("text/html");
         PrintWriter writer = new PrintWriter(resp.getOutputStream());
         StringBuilder stringBuilder = new StringBuilder("<table>");
         for (User user: this.logic.findAll()) {
             stringBuilder.append("<tr><td align='center'>" + user.getLogin() + "</td>"
-                    + "<td><form action='" + req.getContextPath() + "/edit?id=" + user.getId() + "' method='post'>"
-                    + " <input type='submit' value='update'>"
-                    + "<input type='hidden' name='id' value='<%=id%>'/>"
+                    + "<td><form action='" + req.getContextPath() + "/edit?id=" + user.getId() + "' method='get'>"
+                    + "<input type='submit' value='update'>"
+                    + "<input type='hidden' name='id' value='" + user.getId() + "'/>"
                     + "</form></td>"
-                    + "<td><form action='/' method='post'>"
-                    + " <input type='button' value='delete'>"
-                    + "<input type='hidden' name='id' value='<%=id%>'/>"
+                    + "<td><form action='"+ req.getContextPath() + "/list"+"' method='post'>"
+                    + "<input type='submit' value='delete'>"
+                    + "<input type='hidden' name='id' value='" + user.getId() + "'/>"
                     + "</form></td>"
                     + "</tr>");
         }
@@ -38,13 +40,18 @@ public class UsersServlet extends HttpServlet {
                 "</head>" +
                 "<body>" +
                 stringBuilder.toString() +
+                "<form action='" + req.getContextPath() + "/create' method='get'>" +
+                "<input type='submit' value='Create new user'>" +
                 "</body>" +
                 "</html>");
         writer.flush();
     }
 
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        this.update.doPost(req, resp);
+        int userId = Integer.parseInt(req.getParameter("id"));
+        this.logic.delete(userId);
+        doGet(req, resp);
     }
 }

@@ -62,10 +62,10 @@ public class Switcher {
                                     switcher.addToEnd(2);
                                     counter++;
                                 }
-                            }catch (InterruptedException e) {
+                            } catch (InterruptedException e) {
                                 e.printStackTrace();
                                 Thread.currentThread().interrupt();
-                            }finally {
+                            } finally {
                                 locker.unlock();
                                 locker.notifyAll();
                                 try {

@@ -16,5 +16,6 @@
         <mapping class="ru.job4j.xmlandannotations.annotations.Car" />
         <mapping class="ru.job4j.xmlandannotations.annotations.Engine" />
         <mapping class="ru.job4j.xmlandannotations.annotations.Driver" />
+        <mapping class="ru.job4j.hql.Candidate" />
     </session-factory>
 </hibernate-configuration>
